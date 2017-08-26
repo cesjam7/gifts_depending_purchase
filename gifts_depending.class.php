@@ -17,7 +17,7 @@ class GiftsDependingPurchase {
     function gifts_depending_init() {
         register_post_type(
             'gift', array(
-                'labels' => array('name' => 'Gifts', 'singular_name' => 'Gift'),
+                'labels' => array('name' => 'Cupones', 'singular_name' => 'Cupon'),
                 'public' => TRUE,
                 'rewrite' => array( 'slug' => 'gift' ),
                 'has_archive' => FALSE,
@@ -32,7 +32,7 @@ class GiftsDependingPurchase {
     // Registrar Meta box en los formularios
     function gifts_depending_meta_boxes() {
 
-        add_meta_box( 'gift-info', 'Information', array($this, 'gifts_depending_info_content'), 'gift', 'normal', 'high' );
+        add_meta_box( 'gift-info', 'Información', array($this, 'gifts_depending_info_content'), 'gift', 'normal', 'high' );
 
     }
 
@@ -46,7 +46,7 @@ class GiftsDependingPurchase {
         // Cuadro desplegable para elegir la región
         $value = isset( $values['gifts_depending_minimum_price'] ) ? esc_attr( $values['gifts_depending_minimum_price'][0] ) : '';
         $output = '<p class="form-field _regular_price_field ">';
-        $output .= '<label for="gifts_depending_minimum_price" class="gift-label">Minimum Price</label>';
+        $output .= '<label for="gifts_depending_minimum_price" class="gift-label">Precio Mínimo</label>';
         $output .= '<input type="number" name="gifts_depending_minimum_price" id="gifts_depending_minimum_price" class="short wc_input_price" value="'.$value.'" />';
         $output .= '</p>';
 
@@ -78,7 +78,7 @@ class GiftsDependingPurchase {
         $new = array();
         foreach($columns as $key => $title) {
             if ($key=='title') $new['photo'] = '<span class="dashicons dashicons-format-image"></span>';
-            if ($key=='author') $new['minimum_price'] = 'Minimum Price';
+            if ($key=='author') $new['minimum_price'] = 'Precio Mínimo';
             $new[$key] = $title;
         }
         return $new;
@@ -111,7 +111,7 @@ class GiftsDependingPurchase {
         global $wpdb;
         $page = $wpdb->get_col('SELECT ID FROM '.$wpdb->posts.' WHERE post_content LIKE "%[gifts_depending_purchase]%" AND post_parent = 0 AND post_type = "page" AND post_status = "publish"');
         if (!empty($page)) {
-            $output .= '<a href="'.get_permalink($page[0]).'?prod='.get_the_id().'" class="single_add_to_cart_button button alt">Select gift</a>';
+            $output .= '<a href="'.get_permalink($page[0]).'?prod='.get_the_id().'" class="single_add_to_cart_button button alt">Seleccionar cupón</a>';
         } else {
             $output .= 'You must publish a page and add this shortcode <strong>[gifts_depending_purchase]</strong>';
         }
@@ -136,7 +136,7 @@ class GiftsDependingPurchase {
                 $output .= "<hr>";
             }
         } else {
-            $output .= "<p>No gifts found</p>";
+            $output .= "<p>No se encontraron cupones</p>";
         }
 
     	return $output;
