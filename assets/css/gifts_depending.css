@@ -1,0 +1,8 @@
+.post-type-gift .manage-column.column-photo {
+    width: 64px;
+    text-align: center;
+}
+.post-type-gift .photo.column-photo img {
+    width: 100%;
+    height: auto;
+}
