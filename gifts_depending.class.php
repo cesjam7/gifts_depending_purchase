@@ -10,7 +10,6 @@ class GiftsDependingPurchase {
         add_action( 'manage_gift_posts_custom_column', array($this, 'gifts_depending_columns_content'), 10, 2);
         add_filter( 'manage_edit-gift_sortable_columns', array($this, 'gifts_depending_sortable_column') );
         add_action( 'woocommerce_before_add_to_cart_button', array($this, 'gifts_depending_select_button') );
-        add_shortcode( 'gifts_depending_purchase', array($this, 'gifts_depending_shortcode') );
 
     }
 
@@ -26,7 +25,7 @@ class GiftsDependingPurchase {
             )
         );
 
-        wp_enqueue_style( 'gifts_depending_style', plugin_dir_url( __FILE__ ) . 'assets/css/gifts_depending.css', false );
+        wp_enqueue_style( 'gifts_depending_style', plugin_dir_url( __FILE__ ) . 'assets/css/gifts_depending.css', false, time() );
     }
 
     // Registrar Meta box en los formularios
@@ -120,26 +119,6 @@ class GiftsDependingPurchase {
         $output .= '</div>';
         echo $output;
 
-    }
-
-    function gifts_depending_shortcode( $atts ){
-
-        $output = '<p>Selecciona el cupón que deseas recibir con tu donación. Recuerda que el monto de tu donación debe ser superior al monto indicado en el cupón.</p>';
-
-        $gifts = new WP_Query(array(
-            'post_type'         =>  'gift',
-            'posts_per_page'    =>  -1
-        ));
-        if ($gifts->have_posts()) {
-            while ($gifts->have_posts()) { $gifts->the_post();
-                $output .= get_the_title();
-                $output .= "<hr>";
-            }
-        } else {
-            $output .= "<p>No se encontraron cupones</p>";
-        }
-
-    	return $output;
     }
 
 }

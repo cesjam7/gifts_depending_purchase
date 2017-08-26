@@ -12,3 +12,11 @@
 .clear {
     clear: both;
 }
+.gdp7_row {
+    margin: 0 -15px;
+}
+.gdp7_1_3 {
+    width: 33.33%;
+    padding: 20px 15px;
+    float: left;
+}
