@@ -9,6 +9,9 @@ class GiftsDependingPurchase {
         add_filter( 'manage_gift_posts_columns', array($this, 'gifts_depending_columns_head') );
         add_action( 'manage_gift_posts_custom_column', array($this, 'gifts_depending_columns_content'), 10, 2);
         add_filter( 'manage_edit-gift_sortable_columns', array($this, 'gifts_depending_sortable_column') );
+        add_action( 'woocommerce_before_add_to_cart_button', array($this, 'gifts_depending_select_button') );
+        add_shortcode( 'gifts_depending_purchase', array($this, 'gifts_depending_shortcode') );
+
     }
 
     function gifts_depending_init() {
@@ -17,11 +20,13 @@ class GiftsDependingPurchase {
                 'labels' => array('name' => 'Gifts', 'singular_name' => 'Gift'),
                 'public' => TRUE,
                 'rewrite' => array( 'slug' => 'gift' ),
-                'has_archive' => TRUE,
+                'has_archive' => FALSE,
                 'menu_icon' =>  'dashicons-tickets-alt',
                 'supports' =>  array( 'title', 'editor', 'author', 'revisions', 'thumbnail')
             )
         );
+
+        wp_enqueue_style( 'gifts_depending_style', plugin_dir_url( __FILE__ ) . 'assets/css/gifts_depending.css', false );
     }
 
     // Registrar Meta box en los formularios
@@ -99,10 +104,43 @@ class GiftsDependingPurchase {
         return $columns;
     }
 
-    function gifts_depending_admin_assets() {
-        wp_enqueue_style( 'gifts_depending_style', plugin_dir_url( __FILE__ ) . 'assets/css/gifts_depending.css', false );
+    function gifts_depending_select_button() {
+
+        $output = '<div class="gifts_dependin_mb20">';
+
+        global $wpdb;
+        $page = $wpdb->get_col('SELECT ID FROM '.$wpdb->posts.' WHERE post_content LIKE "%[gifts_depending_purchase]%" AND post_parent = 0 AND post_type = "page" AND post_status = "publish"');
+        if (!empty($page)) {
+            $output .= '<a href="'.get_permalink($page[0]).'?prod='.get_the_id().'" class="single_add_to_cart_button button alt">Select gift</a>';
+        } else {
+            $output .= 'You must publish a page and add this shortcode <strong>[gifts_depending_purchase]</strong>';
+        }
+
+        $output .= '<div class="clear"></div>';
+        $output .= '</div>';
+        echo $output;
+
     }
 
+    function gifts_depending_shortcode( $atts ){
+
+        $output = '<p>Selecciona el cupón que deseas recibir con tu donación. Recuerda que el monto de tu donación debe ser superior al monto indicado en el cupón.</p>';
+
+        $gifts = new WP_Query(array(
+            'post_type'         =>  'gift',
+            'posts_per_page'    =>  -1
+        ));
+        if ($gifts->have_posts()) {
+            while ($gifts->have_posts()) { $gifts->the_post();
+                $output .= get_the_title();
+                $output .= "<hr>";
+            }
+        } else {
+            $output .= "<p>No gifts found</p>";
+        }
+
+    	return $output;
+    }
 
 }
 ?>
